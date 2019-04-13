@@ -1,0 +1,45 @@
+//
+// Created by igor de paula on 4/13/2019
+//
+#include "set.h"
+#include "list.h"
+#include "map.h"
+#include "eurovision.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+typedef struct vote_t {
+    int id;
+    int number_of_votes;
+} *Vote;
+
+Vote voteCreate(int id, int number_of_votes){
+    Vote vote = malloc(sizeof(*vote));
+    if(vote == NULL){
+        return NULL;
+    }
+    vote->id = id;
+    vote->number_of_votes = number_of_votes;
+    return vote;
+}
+
+Vote copyVote(SetElement vote){
+    if(vote == NULL){
+        return NULL;
+    }
+    Vote tmp;
+    Vote newVote = malloc(sizeof(*newVote));
+    newVote->id = tmp->id;
+    newVote->number_of_votes = tmp->number_of_votes;
+    return newVote;
+}
+
+void freeVote(SetElement vote){
+    free(vote);
+}
+
+int compareVotes(SetElement vote){   // TBD
+    Vote tmp;
+
+}
