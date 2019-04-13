@@ -1,0 +1,73 @@
+//
+// Created by igor de paula on 4/10/2019.
+//
+
+#include "set.h"
+#include "list.h"
+#include "map.h"
+#include "eurovision.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+
+typedef struct states_t {
+    int id;
+    char *name;
+    char *songName;
+    Set votes;
+} *State ;
+
+State stateCreate(int id, char *name, char *songName){
+    State state = malloc(sizeof(*state));
+    if(state == NULL){
+        return NULL;
+    }
+    state->id = id;
+    state->name = name;
+    state->songName = songName;
+    state->votes = setCreate(copyVotes,freeVotes,compareVotes);
+    if (state->votes == NULL){
+        free(state);
+        return NULL;
+    }
+    return state;
+}
+
+State copyState(SetElement state){
+     if(state == NULL){
+         return NULL;
+     }
+     State tmp;
+     tmp = (State) state;
+     State newState = malloc(sizeof(*newState));
+     if(newState == NULL){
+        return NULL;
+     }
+     newState->id = tmp->id;
+     newState->name = tmp->name;
+     newState->songName = tmp->songName;
+     newState->votes = copyVotes(tmp->votes);
+     return newState;
+}
+
+void freeState(SetElement state){
+    if(state == NULL){
+        return;
+    }
+    State tmp;
+    tmp = (State) state;
+    voteDestroy(tmp->votes);
+    free(tmp);
+}
+
+int compareState(SetElement state1,SetElement state2){
+    if(state1==NULL|| state2==NULL){
+        return 0;
+    }
+    State tmp1,tmp2;
+    tmp1 = (State)state1;
+    tmp2 = (State)state2;
+    return (tmp1->id - tmp2->id);    // if negative id of state 2 bigger, positive state 1 bigger 0 equal.
+}
+
