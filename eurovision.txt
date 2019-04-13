@@ -1,0 +1,88 @@
+//
+// Created by igor de paula on 4/10/2019.
+//
+#include "set.h"
+#include "list.h"
+#include "map.h"
+#include "eurovision.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+
+typedef struct eurovision_t{
+  Set states;
+  Set judges;
+} *Eurovision;
+
+Eurovision eurovisionCreate(){
+    Eurovision euro = malloc(sizeof(*euro));
+    if(euro == NULL){
+        return NULL;
+    }
+    euro->judges = setCreate( copyJudge, freeJudge, compareJudge);
+    if(euro->judges == NULL){
+        free(euro);
+        return NULL;
+    }
+    euro->states = setCreate( copyState, freeState, compareState);
+    if(euro->states == NULL){
+        free(euro->judges);
+        free(euro);
+        return NULL;
+    }
+}
+
+void eurovisionDestroy(Eurovision euro){
+    if(euro == NULL){
+        return;
+    }
+    setDestroy(euro->judges);
+    setDestroy(euro->states);
+    free(euro);
+    return;
+}
+
+EurovisionResult eurovisionAddState(Eurovision euro,int stateId,const char *stateName,const char *songName){
+    if(euro == NULL || stateName == NULL|| songName == NULL){
+        return EUROVISION_NULL_ARGUMENT;
+    }
+    if(stateId<0){
+        return EUROVISION_INVALID_ID;
+    }
+    if(isNameValid(stateName)|| isNameValid(songName)){
+        return EUROVISION_INVALID_NAME;
+    }
+    State newState = stateCreate(stateId,stateName,songName);
+    if(newState == NULL){
+        eurovisionDestroy(euro);
+        return EUROVISION_OUT_OF_MEMORY;
+    }
+    SetResult resault = setAdd(euro->states,newState);
+    if(resault == SET_OUT_OF_MEMORY){
+        eurovisionDestroy(euro);
+        return EUROVISION_OUT_OF_MEMORY;
+    }
+    if(resault == SET_ITEM_ALREADY_EXISTS){
+        return EUROVISION_STATE_ALREADY_EXIST;
+    }
+    if(resault == SET_SUCCESS){
+        return EUROVISION_SUCCESS;
+    }
+}
+
+EurovisionResult eurovisionAddJudge(Eurovision euro, int judgeId,const char *judgeName,int *judgeResults){
+    if(euro == NULL || judgeName == NULL|| judgeResults == NULL){
+        return EUROVISION_NULL_ARGUMENT;
+    }
+    if(judgeId<0 || isRsultsValid(judgeResults)){
+        return EUROVISION_INVALID_ID;
+    }
+    if(!resultMetchStates(euro->states,judgeResults)){
+        return  EUROVISION_STATE_NOT_EXIST;
+    }
+    if(isNameValid(judgeName)==false){
+        return EUROVISION_INVALID_NAME;
+    }
+}
+
