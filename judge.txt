@@ -1,0 +1,63 @@
+//
+// Created by igor de paula on 4/13/2019.
+//
+#include "set.h"
+#include "list.h"
+#include "map.h"
+#include "eurovision.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+typedef struct judge_t {
+    int id;
+    char *name;
+    int* result;
+} *Judge;
+
+
+Judge judgeCreate(int id, char name, int* result){
+    Judge judge= malloc(sizeof(*judge));
+    if(judge == NULL){
+        return NULL;
+    }
+    int* judge_result = malloc(10);
+    if(judge_result == NULL){
+        free(judge);
+        return NULL;
+    }
+    for(int i=0; i<10; i++){
+        judge_result[i]=result[i];
+    }
+    judge->id = id;
+    judge->name = name;
+    judge->result = judge_result;
+    return judge;
+}
+Judge copyJudge(SetElement judge){
+    if(judge == NULL){
+        return NULL;
+    }
+    Judge tmp;
+    tmp = (Judge) judge;
+    Judge newJudge = malloc(sizeof(*newJudge));
+    newJudge->id = tmp->id;
+    newJudge->name = tmp->name;
+    for(int i=0;i<10;i++){
+         newJudge->result[i]=tmp->result[i];
+    }
+    return newJudge;
+}
+
+void freeJudge(SetElement judge){
+    free(judge);
+}
+
+int  compareJudge(SetElement judge1,SetElement judge2){
+    if(judge1 == NULL || judge2 == NULL){
+        return 0;
+    }
+    Judge tmp1 =(Judge)judge1,tmp2 = (Judge )judge2;
+    return (tmp1->id - tmp2->id);
+}
+
